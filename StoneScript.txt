@@ -1,0 +1,95 @@
+// 意念之后启动之后，可以持续执行它所收到的指令。
+// 指令必须使用写入云脚本。
+// 其他信息请见：StoneStoryRPG.com/stonescript。
+// ——质者贝赛拉
+
+// Import MindStone, fishing function, skull head
+import UI/MindstoneButton
+import Fishing
+import Hats/Skully
+
+// if loc is rocky
+?loc = rocky
+    ?harvest.distance < 20
+    equip shovel
+    ?foe = boss & foe.distance < 50
+    equipL sword
+    equipR dashing
+
+// if loc is deadwood
+?loc = deadwood
+    //?harvest.distance<10& pickup.distance>10
+    //equip hatchet
+    ?pickup.distance > 10 & harvest.distance > 10
+    equipL sword
+    equipR dashing
+    //equip heavy_crossbow
+
+// if loc is caves
+?loc = caves
+    equipL dp
+    equipR stone wand
+
+// if loc is haunted
+?loc = haunted
+    equipL dp
+    equipR mask
+    ?foe=boss
+    equipL sword
+    equipR t
+
+// if loc is boiling
+?loc = boiling
+    equipL dp
+    equipR stone wand
+// ?foe = boss
+    // equipL dp
+    // equipR fire
+
+// if HP less than 7, use potion
+?hp < 7
+    activate potion
+
+// if item close, equip auto-obtain-item
+?pickup.distance < 10
+    equipL star
+
+// if loc not specified
+?loc!rockysloc!deadwood&loc!caves&loc!boiling
+    ?loc!haunted
+    equipL sword
+    equipR dashing
+    ?pickup.distance < 10
+    equipL star
+
+// if no item and close enemy
+?pickup.distance > 10 & foe.distance <= 6
+    ?item.GetCooldown("skeleton_arm")<=0
+    ^ & loc!haunted
+    ?foe.hp < 32
+    equip skeleton_arm
+    ?item.CanActivate("skeleton_arm")
+    activate R
+
+// if boss and close
+?foe = boss & foe.distance <= 10
+    ?item.GetCooldown("bardiche") <= 0
+        equip bardiche
+        activate R
+    ?item.GetCooldown("bardiche") >= 870
+        equip bardiche
+        activate R
+
+// if God Blade cooled
+?item.GetCooldown("blade") <= 0
+    ^ & foe.count > 2 & foe.distance < 25
+    ^ & item.CanActivate()
+        equip Blade of the Fallen God
+        activate R
+
+// if cultist mask cooled
+?item.GetCooldown("cult_mask") <= 0
+    ^ & item.CanActivate() & foe.distance < 25
+    ^ & foe.distance > 20
+        equipR mask
+        activate R
